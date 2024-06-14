@@ -1,9 +1,11 @@
+from django.utils import timezone
 from rest_framework import generics, status
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 from borrowing.models import Borrowing, Book
 from borrowing.serializers import BorrowingSerializer
-from django.utils import timezone
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
@@ -15,10 +17,10 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
 
-        if user_id:
+        if user_id is not None:
             queryset = queryset.filter(user_id=user_id)
 
-        if is_active:
+        if is_active is not None:
             is_active = is_active.lower() in ("true", "1")
             queryset = queryset.filter(is_active=is_active)
 
@@ -26,11 +28,12 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         book_id = request.data.get("book")
-        book = Book.objects.get(id=book_id)
-        if book.inventory < 1:
+        try:
+            book = Book.objects.get(id=book_id)
+        except Book.DoesNotExist:
             return Response(
-                {"error": "Book not available"},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "Book not found"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
         book.inventory -= 1
@@ -45,7 +48,10 @@ class BorrowingDetailAPIView(generics.RetrieveAPIView):
 
 
 @api_view(["POST"])
-def return_borrowing(request, pk):
+def return_borrowing(request: Request, pk: int) -> Response:
+    """
+    Handle the return of a borrowed book.
+    """
     try:
         borrowing = Borrowing.objects.get(pk=pk)
     except Borrowing.DoesNotExist:
