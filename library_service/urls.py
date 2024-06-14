@@ -23,6 +23,7 @@ urlpatterns = [
     path("api/user/", include("user.urls"), name="user"),
     path("api/book/", include("book.urls")),
     path("api/borrowing/", include("borrowing.urls")),
+    path("api/payment/", include("payment.urls"), name="payment"),
 ]
 
 if not settings.TESTING:
