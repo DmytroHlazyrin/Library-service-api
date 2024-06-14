@@ -28,4 +28,5 @@ if not settings.TESTING:
         *urlpatterns,
         path("__debug__/", include("debug_toolbar.urls")),
         path("api/book/", include("book.urls")),
+        path("api/borrowing/", include("borrowing.urls")),
     ]
