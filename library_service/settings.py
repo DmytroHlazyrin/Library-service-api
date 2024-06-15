@@ -60,6 +60,19 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
 }
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Book Rental Service",
+    "DESCRIPTION": "Borrow books to read!",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelRendering": "model",
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+    },
+}
+
 TESTING = "test" in sys.argv
 
 if not TESTING:
