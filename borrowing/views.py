@@ -33,7 +33,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
         return queryset
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request: Request, *args, **kwargs) -> Response:
         book_id = request.data.get("book")
         try:
             book = Book.objects.get(id=book_id)
@@ -43,10 +43,20 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        if book.inventory < 1:
+            return Response(
+                {"error": "Book is not available"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         book.inventory -= 1
         book.save()
 
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
