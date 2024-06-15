@@ -2,7 +2,11 @@ from django.db import models
 
 
 class Book(models.Model):
+    """Book model."""
+
     class Covers(models.TextChoices):
+        """Book cover options."""
+
         HARD = "HARD"
         SOFT = "SOFT"
 
@@ -12,5 +16,6 @@ class Book(models.Model):
     inventory = models.PositiveIntegerField()
     daily_fee = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Returns the title of the book."""
         return self.title
