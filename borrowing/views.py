@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
@@ -63,19 +64,19 @@ def return_borrowing(request: Request, pk: int) -> Response:
             status=status.HTTP_404_NOT_FOUND
         )
 
-    if not borrowing.is_active:
+    if borrowing.actual_return_date is not None:
         return Response(
             {"error": "Borrowing already returned"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    borrowing.actual_return_date = timezone.now().date()
-    borrowing.is_active = False
-    borrowing.save()
+    with transaction.atomic():
+        borrowing.actual_return_date = timezone.now().date()
+        borrowing.save()
 
-    book = borrowing.book
-    book.inventory += 1
-    book.save()
+        book = borrowing.book
+        book.inventory += 1
+        book.save()
 
     return Response(
         {"status": "Return date set and inventory updated"},
