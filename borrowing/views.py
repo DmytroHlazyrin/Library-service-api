@@ -15,7 +15,7 @@ from borrowing.serializers import (
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
@@ -73,7 +73,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
