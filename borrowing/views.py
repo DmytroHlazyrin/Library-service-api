@@ -17,12 +17,17 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        user_id = self.request.query_params.get("user_id")
-        is_active = self.request.query_params.get("is_active")
+        user = self.request.user
 
-        if user_id:
-            queryset = queryset.filter(user=user_id)
+        if user.is_staff:
+            queryset = super().get_queryset()
+            user_id = self.request.query_params.get("user_id")
+            if user_id:
+                queryset = queryset.filter(user=user_id)
+        else:
+            queryset = super().get_queryset().filter(user=user)
+
+        is_active = self.request.query_params.get("is_active")
 
         if is_active is not None:
             is_active = is_active.lower() in ("true", "1")
@@ -33,7 +38,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
         return queryset
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request: Request, *args, **kwargs) -> Response:
         book_id = request.data.get("book")
         try:
             book = Book.objects.get(id=book_id)
@@ -43,10 +48,20 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        if book.inventory < 1:
+            return Response(
+                {"error": "Book is not available"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         book.inventory -= 1
         book.save()
 
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
