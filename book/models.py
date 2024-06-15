@@ -7,6 +7,9 @@ from rest_framework.exceptions import ValidationError
 
 
 def book_image_path(instance: "Book", filename: str) -> pathlib.Path:
+    """
+    Generates a unique file path for a book image upload.
+    """
     filename = (f"{slugify(instance.title)}-{uuid.uuid4()}.jpg"
                 + pathlib.Path(filename).suffix)
     return pathlib.Path("uploads/movies") / pathlib.Path(filename)
@@ -38,7 +41,9 @@ class Book(models.Model):
 
         Returns True if no active borrowings exist.
         """
-        return not self.borrowing.filter(actual_return_date__isnull=True).exists()
+        return not self.borrowing.filter(
+            actual_return_date__isnull=True
+        ).exists()
 
     def delete(self, using=None, keep_parents=False) -> None:
         """
@@ -47,7 +52,8 @@ class Book(models.Model):
         """
         if not self.can_be_deleted():
             raise ValidationError(
-                "Cannot delete the book because it is currently borrowed by someone."
+                "Cannot delete the book "
+                "because it is currently borrowed by someone."
             )
 
         super().delete(using=using, keep_parents=keep_parents)

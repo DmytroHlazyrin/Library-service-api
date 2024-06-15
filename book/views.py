@@ -24,7 +24,8 @@ class BookListView(
         """
         Handle GET request.
 
-        Returns a list of all books with optional filtering by title and author.
+        Returns a list of all books
+        with optional filtering by title and author.
         """
         title = request.query_params.get("title")
         author = request.query_params.get("author")
