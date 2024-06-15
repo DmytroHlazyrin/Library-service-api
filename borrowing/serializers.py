@@ -4,12 +4,15 @@ from borrowing.models import Borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
+    book = serializers.StringRelatedField()
+    user_email = serializers.CharField(source='user.email', read_only=True)
+
     class Meta:
         model = Borrowing
         fields = (
             "id",
             "book",
-            "user",
+            "user_email",
             "borrow_date",
             "expected_return_date",
             "actual_return_date",
