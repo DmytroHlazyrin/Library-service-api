@@ -7,13 +7,14 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from borrowing.models import Borrowing, Book
+from borrowing.permissions import IsAdminOrOwner
 from borrowing.serializers import BorrowingSerializer
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -51,7 +52,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
 
 @api_view(["POST"])
