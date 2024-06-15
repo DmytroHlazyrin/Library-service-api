@@ -18,7 +18,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
 
-        if user_id is not None:
+        if user_id:
             queryset = queryset.filter(user=user_id)
 
         if is_active is not None:
