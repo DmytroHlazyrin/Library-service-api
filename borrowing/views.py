@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
@@ -51,11 +52,13 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         borrowing = serializer.save()
 
-        payment = create_stripe_session_for_borrowing(borrowing)
+        session = create_stripe_session_for_borrowing(borrowing, request)
 
         # потрібно прописати якусь логіку на те щоб коли payment не пройшов, то rollback borrowing
-
-        if not payment:
+        if session:
+            # Redirect to Stripe payment form
+            return redirect(session.url, code=303)
+        else:
             # Rollback book inventory update if payment creation fails
             book.inventory += 1
             book.save()
@@ -63,6 +66,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
                 {"error": "Error creating payment session"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
