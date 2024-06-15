@@ -8,7 +8,10 @@ from rest_framework.response import Response
 
 from borrowing.models import Borrowing, Book
 from borrowing.permissions import IsAdminOrOwner
-from borrowing.serializers import BorrowingSerializer
+from borrowing.serializers import (
+    BorrowingSerializer,
+    BorrowingCreateSerializer,
+)
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
@@ -37,6 +40,11 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
                 queryset = queryset.filter(actual_return_date__isnull=False)
 
         return queryset
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return BorrowingCreateSerializer
+        return BorrowingSerializer
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         book_id = request.data.get("book")
