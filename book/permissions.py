@@ -1,31 +1,20 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
-class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
+class IsAdminOrReadOnly(BasePermission):
     """
-    Custom permission to allow read-only access to authenticated users,
-    and full access to admin users.
-
-    Attributes:
-        SAFE_METHODS (tuple): Tuple of HTTP methods considered safe.
+    Custom permission to allow all users to list and retrieve books,
+    but only admins can add, edit, or delete books.
     """
 
     def has_permission(self, request, view) -> bool:
         """
-        Check if the requesting user has permission to access the view.
-
-        Args:
-            request (HttpRequest): The incoming request object.
-            view (APIView): The view instance handling the request.
+        Check if the request should be granted permission.
 
         Returns:
-            bool: True if the user is authenticated for safe methods or is an admin, False otherwise.
+            True if the request is a safe method or the user is an admin,
+            False otherwise.
         """
-        return bool(
-            (
-                request.method in SAFE_METHODS
-                and request.user
-                and request.user.is_authenticated
-            )
-            or (request.user and request.user.is_staff)
-        )
+        if request.method in SAFE_METHODS:
+            return True
+        return bool(request.user and request.user.is_staff)
