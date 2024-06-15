@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from borrowing.models import Borrowing, Book
 from borrowing.permissions import IsAdminOrOwner
 from borrowing.serializers import BorrowingSerializer
+from payment.utils import create_stripe_session_for_borrowing
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
@@ -46,7 +47,12 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         book.inventory -= 1
         book.save()
 
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        borrowing = serializer.save()
+
+        create_stripe_session_for_borrowing(borrowing)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
