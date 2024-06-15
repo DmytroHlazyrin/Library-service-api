@@ -3,6 +3,7 @@ from rest_framework.response import Response
 
 from book.decorators import book_list_view_schema, book_detail_view_schema
 from book.models import Book
+from book.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from book.serializers import BookSerializer
 
@@ -17,6 +18,7 @@ class BookListView(
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get(self, request, *args, **kwargs) -> Response:
         """
@@ -58,6 +60,7 @@ class BookDetailView(
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get(self, request, *args, **kwargs) -> Response:
         """
