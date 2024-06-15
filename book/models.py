@@ -21,41 +21,20 @@ class Book(models.Model):
         """Returns the title of the book."""
         return self.title
 
-    def has_active_borrowing(self) -> bool:
+    def can_be_deleted(self) -> bool:
         """
-        Checks if there are active borrowings (book is currently borrowed).
+        Checks if the book can be deleted.
 
-        Returns:
-            bool: True if there are active borrowings, False otherwise.
+        Returns True if no active borrowings exist.
         """
-        return self.borrowing_set.filter(actual_return_date__isnull=True).exists()
-
-    def clean(self) -> None:
-        """
-        Performs model validation.
-
-        Raises:
-            ValidationError: If there are active borrowings, prevents saving the book.
-        """
-        if self.has_active_borrowing():
-            raise ValidationError(
-                "Cannot delete the book because it is currently borrowed by someone."
-            )
-
-        super().clean()
+        return not self.borrowing.filter(actual_return_date__isnull=True).exists()
 
     def delete(self, using=None, keep_parents=False) -> None:
         """
-        Deletes the book if there are no active borrowings.
-
-        Args:
-            using (str, optional): The database alias to use. Defaults to None.
-            keep_parents (bool, optional): If True, keep the parent link. Defaults to False.
-
-        Raises:
-            ValidationError: If there are active borrowings, prevents deletion of the book.
+        Deletes the book if no active borrowings exist;
+        otherwise, raises a ValidationError.
         """
-        if self.has_active_borrowing():
+        if not self.can_be_deleted():
             raise ValidationError(
                 "Cannot delete the book because it is currently borrowed by someone."
             )
