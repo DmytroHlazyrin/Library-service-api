@@ -137,3 +137,8 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "user.User"
+
+STRIPE_PUBLISHABLE_KEY = ("pk_test_51PRuu208vjRAr5vg0EeeFuvOvPcSQoZQt76Ljkyuxp"
+                          "KJT7BAipncyFewaLmACuI6ijzolZubcgGklRntp1gIsfBS00xEBBogF4")
+STRIPE_SECRET_KEY = ("sk_test_51PRuu208vjRAr5vgYIGlwYL0exEZRmp6zI31Mabh"
+                     "UGaIGLcgHcKhO66rqSaMQ7NsiBpfhNOerfnzoh7wC4Qieh3400n1k0QwgL")
