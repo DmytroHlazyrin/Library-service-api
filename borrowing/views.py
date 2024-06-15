@@ -51,7 +51,18 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         borrowing = serializer.save()
 
-        create_stripe_session_for_borrowing(borrowing)
+        payment = create_stripe_session_for_borrowing(borrowing)
+
+        # потрібно прописати якусь логіку на те щоб коли payment не пройшов, то rollback borrowing
+
+        if not payment:
+            # Rollback book inventory update if payment creation fails
+            book.inventory += 1
+            book.save()
+            return Response(
+                {"error": "Error creating payment session"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
