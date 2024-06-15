@@ -1,10 +1,13 @@
 from rest_framework import generics, mixins
 from rest_framework.response import Response
 
+from book.decorators import book_list_view_schema, book_detail_view_schema
 from book.models import Book
+
 from book.serializers import BookSerializer
 
 
+@book_list_view_schema
 class BookListView(
     generics.GenericAPIView,
     mixins.ListModelMixin,
@@ -19,9 +22,21 @@ class BookListView(
         """
         Handle GET request.
 
-        Returns a list of all books.
+        Returns a list of all books with optional filtering by title and author.
         """
-        return self.list(request, *args, **kwargs)
+        title = request.query_params.get("title")
+        author = request.query_params.get("author")
+
+        queryset = self.get_queryset()
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+
+        if author:
+            queryset = queryset.filter(author__icontains=author)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs) -> Response:
         """
@@ -32,6 +47,7 @@ class BookListView(
         return self.create(request, *args, **kwargs)
 
 
+@book_detail_view_schema
 class BookDetailView(
     generics.GenericAPIView,
     mixins.RetrieveModelMixin,
