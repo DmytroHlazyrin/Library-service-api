@@ -1,18 +1,17 @@
 import stripe
 from django.conf import settings
+from decimal import Decimal
+from payment.models import Payment
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def create_stripe_session_for_borrowing(borrowing):
-    # Assuming each borrowing has a single payment amount to be paid
-    payment = borrowing.payments.first()  # Assuming there's at least one payment
-
-    if not payment:
-        raise ValueError("No payment found for this borrowing")
-
-    amount_to_pay = payment.money_to_pay
+    # Calculate the total price for the borrowing
+    # This example assumes you have a way to calculate the total price, here it's set as a fixed value for demonstration
+    total_price = Decimal("10.00")  # Replace this with your actual price calculation logic
 
     try:
+        # Create Stripe session
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -21,7 +20,7 @@ def create_stripe_session_for_borrowing(borrowing):
                     'product_data': {
                         'name': borrowing.book.title,
                     },
-                    'unit_amount': int(amount_to_pay * 100),  # Amount in cents
+                    'unit_amount': int(total_price * 100),  # Amount in cents
                 },
                 'quantity': 1,
             }],
@@ -29,7 +28,17 @@ def create_stripe_session_for_borrowing(borrowing):
             success_url='https://your-domain.com/success',  # Change to your actual success URL
             cancel_url='https://your-domain.com/cancel',    # Change to your actual cancel URL
         )
-        return session
+
+        # Create and save a Payment instance
+        payment = Payment.objects.create(
+            status=Payment.PaymentStatus.PENDING,
+            payment_type=Payment.PaymentType.PAYMENT,
+            borrowing_id=borrowing,
+            session_url=session.url,
+            session_id=session.id,
+            money_to_pay=total_price
+        )
+        return payment
     except Exception as e:
         print(f"Error creating Stripe session: {e}")
         return None
