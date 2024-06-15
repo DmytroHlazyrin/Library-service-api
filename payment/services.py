@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 
 import stripe
@@ -9,11 +10,14 @@ from stripe.api_resources.checkout import Session
 from borrowing.models import Borrowing
 from payment.models import Payment
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
 
-
-def create_stripe_session_for_borrowing(borrowing: Borrowing, request: Request) -> Optional[Session]:
-    total_price = 10
+def create_stripe_session_for_borrowing(
+        borrowing: Borrowing,
+        request: Request,
+        total_price: Decimal,
+        payment_type: str
+) -> Optional[Session]:
+    stripe.api_key = settings.STRIPE_SECRET_KEY
 
     try:
         success_url = request.build_absolute_uri(reverse('payment:payment-success'))
@@ -38,7 +42,7 @@ def create_stripe_session_for_borrowing(borrowing: Borrowing, request: Request) 
 
         Payment.objects.create(
             status=Payment.PaymentStatus.PENDING,
-            payment_type=Payment.PaymentType.PAYMENT,
+            payment_type=payment_type,
             borrowing_id=borrowing,
             session_url=session.url,
             session_id=session.id,
@@ -46,6 +50,7 @@ def create_stripe_session_for_borrowing(borrowing: Borrowing, request: Request) 
         )
 
         return session
+
     except Exception as e:
         print(f"Error creating Stripe session: {e}")
         return None

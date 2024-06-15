@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils import timezone
@@ -10,7 +12,23 @@ from rest_framework.response import Response
 from borrowing.models import Borrowing, Book
 from borrowing.permissions import IsAdminOrOwner
 from borrowing.serializers import BorrowingSerializer
-from payment.utils import create_stripe_session_for_borrowing
+from payment.models import Payment
+from payment.services import create_stripe_session_for_borrowing
+
+
+def calculate_total_price(borrowing: Borrowing) -> Decimal:
+    delta = borrowing.expected_return_date - borrowing.borrow_date
+    days_borrowed = delta.days
+    total_price = days_borrowed * borrowing.book.daily_fee
+    return Decimal(total_price)
+
+
+def calculate_fine(borrowing: Borrowing) -> Decimal:
+    FINE_MULTIPLIER = 2
+    days_overdue = (borrowing.actual_return_date - borrowing.expected_return_date).days
+    daily_fee = borrowing.book.daily_fee
+    fine_amount = days_overdue * daily_fee * FINE_MULTIPLIER
+    return Decimal(fine_amount)
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
@@ -35,7 +53,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
         return queryset
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs) -> Response:
         book_id = request.data.get("book")
         try:
             book = Book.objects.get(id=book_id)
@@ -52,11 +70,12 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         borrowing = serializer.save()
 
-        session = create_stripe_session_for_borrowing(borrowing, request)
+        total_price = calculate_total_price(borrowing)
+        payment_type = Payment.PaymentType.PAYMENT
+        session = create_stripe_session_for_borrowing(borrowing, request, total_price, payment_type)
 
         # потрібно прописати якусь логіку на те щоб коли payment не пройшов, то rollback borrowing
         if session:
-            # Redirect to Stripe payment form
             return redirect(session.url, code=303)
         else:
             # Rollback book inventory update if payment creation fails
@@ -67,8 +86,6 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
     queryset = Borrowing.objects.all()
@@ -76,7 +93,7 @@ class BorrowingDetailAPIView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
 
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 def return_borrowing(request: Request, pk: int) -> Response:
     """
     Handle the return of a borrowed book.
@@ -95,6 +112,7 @@ def return_borrowing(request: Request, pk: int) -> Response:
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    session = None
     with transaction.atomic():
         borrowing.actual_return_date = timezone.now().date()
         borrowing.save()
@@ -102,6 +120,13 @@ def return_borrowing(request: Request, pk: int) -> Response:
         book = borrowing.book
         book.inventory += 1
         book.save()
+
+        if borrowing.expected_return_date < borrowing.actual_return_date:
+            fine_amount = calculate_fine(borrowing)
+            payment_type = Payment.PaymentType.FINE
+            session = create_stripe_session_for_borrowing(borrowing, request, fine_amount, payment_type)
+            if session:
+                return redirect(session.url, code=303)
 
     return Response(
         {"status": "Return date set and inventory updated"},

@@ -59,7 +59,7 @@ class PaymentSuccessView(APIView):
 
 
 class PaymentCancelView(APIView):
-    # permission_classes = (AllowAny,)
+    permission_classes = (AllowAny,)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         return Response({"detail": "Payment can be made later. The session is available for only 24 hours."},

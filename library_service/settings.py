@@ -1,6 +1,7 @@
 import sys
 from datetime import timedelta
 from pathlib import Path
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = ("django-insecure-e^t9$y43jp#e43%z"
@@ -47,9 +48,9 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    # "DEFAULT_AUTHENTICATION_CLASSES": (
+    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # ),
 }
 
 SIMPLE_JWT = {
@@ -138,7 +139,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "user.User"
 
-STRIPE_PUBLISHABLE_KEY = ("pk_test_51PRuu208vjRAr5vg0EeeFuvOvPcSQoZQt76Ljkyuxp"
-                          "KJT7BAipncyFewaLmACuI6ijzolZubcgGklRntp1gIsfBS00xEBBogF4")
-STRIPE_SECRET_KEY = ("sk_test_51PRuu208vjRAr5vgYIGlwYL0exEZRmp6zI31Mabh"
-                     "UGaIGLcgHcKhO66rqSaMQ7NsiBpfhNOerfnzoh7wC4Qieh3400n1k0QwgL")
+STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
