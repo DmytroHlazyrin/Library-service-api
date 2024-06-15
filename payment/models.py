@@ -23,7 +23,7 @@ class Payment(models.Model):
         Borrowing, on_delete=models.CASCADE, related_name="payments"
     )
     session_url = models.URLField()
-    session_id = models.IntegerField()
+    session_id = models.CharField(max_length=100)
     money_to_pay = models.DecimalField(
         max_digits=10, decimal_places=2, default=Decimal("0.00")
     )
