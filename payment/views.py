@@ -17,6 +17,11 @@ class PaymentListCreateView(generics.ListCreateAPIView):
             return Payment.objects.all()
         return Payment.objects.filter(borrowing_id__user=user)
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return PaymentListSerializer
+        return self.serializer_class
+
     def perform_create(self, serializer):
         payment = serializer.save()
         borrowing = payment.borrowing_id
