@@ -53,12 +53,12 @@ class PaymentSuccessView(APIView):
 
         payment = get_object_or_404(Payment, session_id=session_id)
         if payment_intent.status == "succeeded":
+            payment.status = Payment.PaymentStatus.PAID
+            payment.save()
             send_message(
                 f"Payment was successful from {self.request.user} "
                 f"Money: {payment.money_to_pay}$"
             )
-            payment.status = Payment.PaymentStatus.PAID
-            payment.save()
 
         return Response(
             {
