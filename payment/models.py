@@ -14,16 +14,14 @@ class Payment(models.Model):
         FINE = "FINE", "Fine"
 
     status = models.CharField(
-        max_length=7,
-        choices=PaymentStatus.choices,
-        default=PaymentStatus.PENDING
+        max_length=7, choices=PaymentStatus.choices, default=PaymentStatus.PENDING
     )
     payment_type = models.CharField(max_length=7, choices=PaymentType.choices)
     borrowing_id = models.ForeignKey(
         Borrowing, on_delete=models.CASCADE, related_name="payments"
     )
     session_url = models.URLField()
-    session_id = models.IntegerField()
+    session_id = models.CharField(max_length=100)
     money_to_pay = models.DecimalField(
         max_digits=10, decimal_places=2, default=Decimal("0.00")
     )
