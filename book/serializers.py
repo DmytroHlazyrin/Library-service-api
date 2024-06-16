@@ -32,6 +32,6 @@ class BookSerializer(serializers.ModelSerializer):
         """Validate the author's name to contain only allowed characters."""
         if not re.match(r"^[a-zA-Z\s\-.,']+$", value):
             raise serializers.ValidationError(
-                "Name of author can contain only latin symbols and -.,'"
+                "The author's name can only contain latin symbols and -.,'"
             )
         return value
