@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from book.serializers import BookSerializer
@@ -27,6 +28,13 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = ("id", "book", "expected_return_date")
 
+    def validate_expected_return_date(self, value):
+        if value < timezone.now().date():
+            raise serializers.ValidationError(
+                "Expected return date cannot be in the past."
+            )
+        return value
+
 
 class BorrowingDetailSerializer(BorrowingSerializer):
     book = BookSerializer()
@@ -44,3 +52,4 @@ class BorrowingDetailSerializer(BorrowingSerializer):
             "actual_return_date",
             "payments"
         )
+
