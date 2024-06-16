@@ -11,7 +11,11 @@ from rest_framework.response import Response
 
 from borrowing.models import Borrowing, Book
 from borrowing.permissions import IsAdminOrOwner
-from borrowing.serializers import BorrowingSerializer, BorrowingCreateSerializer
+from borrowing.serializers import (
+    BorrowingSerializer,
+    BorrowingCreateSerializer,
+    BorrowingDetailSerializer,
+)
 from payment.models import Payment
 from payment.services import create_stripe_session_for_borrowing
 
@@ -104,7 +108,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
     queryset = Borrowing.objects.select_related("user", "book")
-    serializer_class = BorrowingSerializer
+    serializer_class = BorrowingDetailSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
 
