@@ -14,7 +14,6 @@ from telegram.ext import (
     ContextTypes,
 )
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import requests
 
 TG_BOT_TOKEN = config("TG_TOKEN")
 
@@ -28,19 +27,6 @@ logger = logging.getLogger(__name__)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.message.chat_id
     await update.message.reply_text(f"Добро пожаловать! Ваш chat_id: {chat_id}")
-
-
-def send_message(message: str):
-    url = f"https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage"
-    data = {"chat_id": config("YOUR_CHAT_ID", cast=int), "text": message}
-    response = requests.post(url, data=data)
-    if response.status_code != 200:
-        logger.error(f"Failed to send message: {response.text}")
-
-
-def send_report(report_lines: list):
-    message = "\n".join(report_lines)
-    send_message(message)
 
 
 def main() -> None:
