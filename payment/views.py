@@ -13,8 +13,7 @@ from payment.serializers import PaymentSerializer, PaymentListSerializer
 
 class PaymentListView(generics.ListAPIView):
     serializer_class = PaymentListSerializer
-
-    # permission_classes = (IsAuthenticated, IsAdminOrOwner)
+    permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
     def get_queryset(self):
         user = self.request.user
@@ -39,9 +38,11 @@ class PaymentSuccessView(APIView):
 
     def get(self, request: Request, *args, **kwargs) -> Response:
 
-        session_id = request.query_params.get('session_id')
+        session_id = request.query_params.get("session_id")
         if not session_id:
-            return Response({"error": "No session ID provided"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "No session ID provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             session = stripe.checkout.Session.retrieve(session_id)
@@ -50,17 +51,27 @@ class PaymentSuccessView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         payment = get_object_or_404(Payment, session_id=session_id)
-        if payment_intent.status == 'succeeded':
+        if payment_intent.status == "succeeded":
             payment.status = Payment.PaymentStatus.PAID
             payment.save()
 
-        return Response({"status": "Payment was successful", "payment": PaymentSerializer(payment).data},
-                        status=status.HTTP_200_OK)
+        return Response(
+            {
+                "status": "Payment was successful",
+                "payment": PaymentSerializer(payment).data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class PaymentCancelView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
-        return Response({"detail": "Payment can be made later. The session is available for only 24 hours."},
-                        status=status.HTTP_200_OK)
+        return Response(
+            {
+                "detail": "Payment can be made later. "
+                "The session is available for only 24 hours."
+            },
+            status=status.HTTP_200_OK,
+        )
