@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from botSend import send_message
 from payment.models import Payment
 from payment.permissions import IsAdminOrOwner
 from payment.serializers import PaymentSerializer, PaymentListSerializer
@@ -52,7 +53,7 @@ class PaymentSuccessView(APIView):
 
         payment = get_object_or_404(Payment, session_id=session_id)
         if payment_intent.status == "succeeded":
-
+            send_message(f"Payment was successful from {self.request.user}\n Money: {payment.money_to_pay}")
             payment.status = Payment.PaymentStatus.PAID
             payment.save()
 
