@@ -2,6 +2,7 @@ from django.db import models
 
 from book.models import Book
 from library_service import settings
+from .tasks import my_task, another_task
 
 User = settings.AUTH_USER_MODEL
 
@@ -20,6 +21,11 @@ class Borrowing(models.Model):
         on_delete=models.CASCADE,
         related_name="borrowing"
     )
+
+    def save(self, *args, **kwargs):
+        my_task.delay()
+        super().save(*args, **kwargs)
+        another_task.delay()
 
     def __str__(self):
         return f"{self.user} borrowed {self.book} ({self.borrow_date})"

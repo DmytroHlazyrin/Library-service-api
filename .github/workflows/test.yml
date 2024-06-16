@@ -3,7 +3,7 @@ name: Test
 on:
   pull_request:
     branches:
-      - "master"
+      - "main"
 
 jobs:
   test:
@@ -25,4 +25,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run flake8
-        run: flake8 app/
+        run: flake8
