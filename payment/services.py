@@ -12,31 +12,30 @@ from payment.models import Payment
 
 
 def create_stripe_session_for_borrowing(
-        borrowing: Borrowing,
-        request: Request,
-        total_price: Decimal,
-        payment_type: str
+    borrowing: Borrowing, request: Request, total_price: Decimal, payment_type: str
 ) -> Optional[Session]:
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
     try:
-        success_url = request.build_absolute_uri(reverse('payment:payment-success'))
-        cancel_url = request.build_absolute_uri(reverse('payment:payment-cancel'))
+        success_url = request.build_absolute_uri(reverse("payment:payment-success"))
+        cancel_url = request.build_absolute_uri(reverse("payment:payment-cancel"))
 
         session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': borrowing.book.title,
+            payment_method_types=["card"],
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {
+                            "name": borrowing.book.title,
+                        },
+                        "unit_amount": int(total_price * 100),
                     },
-                    'unit_amount': int(total_price * 100),
-                },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url=f'{success_url}?session_id={{CHECKOUT_SESSION_ID}}',
+                    "quantity": 1,
+                }
+            ],
+            mode="payment",
+            success_url=f"{success_url}?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=cancel_url,
         )
 
@@ -46,9 +45,9 @@ def create_stripe_session_for_borrowing(
             borrowing_id=borrowing,
             session_url=session.url,
             session_id=session.id,
-            money_to_pay=total_price
+            money_to_pay=total_price,
         )
-
+        print(session.url)
         return session
 
     except Exception as e:
