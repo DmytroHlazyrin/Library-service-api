@@ -63,7 +63,7 @@ def get_borrowing_report():
                   f"\n    From: {email}")
         if days_until_due == 1:
             will_be_expired_soon.append(string)
-        elif days_until_due < 0:
+        elif days_until_due <= 0:
             already_expired.append(string)
 
     report_lines = []
