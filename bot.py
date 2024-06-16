@@ -32,7 +32,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def send_message(message: str):
     url = f"https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage"
-    data = {"chat_id": config("YOUR_USER_ID", cast=int), "text": message}
+    data = {"chat_id": config("YOUR_CHAT_ID", cast=int), "text": message}
     response = requests.post(url, data=data)
     if response.status_code != 200:
         logger.error(f"Failed to send message: {response.text}")

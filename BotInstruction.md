@@ -25,7 +25,7 @@ TG_TOKEN=ваш_токен_бота
 Добавьте полученный `chat_id` в файл `.env`:
 
 ```
-YOUR_USER_ID=ваш_chat_id
+YOUR_CHAT_ID=ваш_chat_id
 ```
 
 ## 6. Пример использования
