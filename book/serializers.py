@@ -17,5 +17,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     def validate_author(self, value):
         if not re.match(r"^[a-zA-Z\s\-.,']+$", value):
-            raise serializers.ValidationError("Name of author can contain only latin symbols and -., '")
+            raise serializers.ValidationError(
+                "Name of author can contain only latin symbols and -., '"
+            )
         return value
