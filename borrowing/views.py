@@ -1,10 +1,12 @@
 from decimal import Decimal
 
 from django.db import transaction, IntegrityError
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -68,6 +70,15 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         return self.serializer_class
 
     def create(self, request: Request, *args, **kwargs) -> Response:
+        if Payment.objects.filter(
+            Q(status=Payment.PaymentStatus.PENDING)
+            | Q(status=Payment.PaymentStatus.EXPIRED),
+            borrowing_id__user=request.user,
+        ).exists():
+            raise ValidationError(
+                "User has pending payments and cannot borrow new books."
+            )
+
         book_id = request.data.get("book")
         try:
             book = Book.objects.get(id=book_id)
