@@ -12,7 +12,10 @@ from payment.models import Payment
 
 
 def create_stripe_session_for_borrowing(
-    borrowing: Borrowing, request: Request, total_price: Decimal, payment_type: str
+        borrowing: Borrowing,
+        request: Request,
+        total_price: Decimal,
+        payment_type: str
 ) -> Optional[Session]:
     """
     Create a Stripe session and Payment for borrowing a book.
@@ -20,8 +23,12 @@ def create_stripe_session_for_borrowing(
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
     try:
-        success_url = request.build_absolute_uri(reverse("payment:payment-success"))
-        cancel_url = request.build_absolute_uri(reverse("payment:payment-cancel"))
+        success_url = request.build_absolute_uri(
+            reverse("payment:payment-success")
+        )
+        cancel_url = request.build_absolute_uri(
+            reverse("payment:payment-cancel")
+        )
 
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
