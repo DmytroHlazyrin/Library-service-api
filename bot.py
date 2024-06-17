@@ -6,7 +6,7 @@ import django
 from decouple import config
 from botSend import send_report, send_message
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'library_service.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "library_service.settings")
 django.setup()
 
 from borrowing.models import Borrowing
@@ -29,11 +29,18 @@ logger = logging.getLogger(__name__)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handles the /start command, sending a welcome message along with the user's chat ID.
+    """
     chat_id = update.message.chat_id
-    await update.message.reply_text(f"🙏Добро пожаловать! Ваш chat_id: {chat_id}")
+    await update.message.reply_text(f"🙏Welcome! Your chat_id: {chat_id}")
 
 
 def main() -> None:
+    """
+    Sets up the Telegram bot application and starts polling for updates. Also, initializes
+    the async scheduler.
+    """
     app = ApplicationBuilder().token(TG_BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     scheduler = AsyncIOScheduler()
@@ -42,6 +49,10 @@ def main() -> None:
 
 
 def get_borrowing_report():
+    """
+    Generates a report of borrowings that will expire soon and those that have already expired.
+    Sends a formatted message with the report details via Telegram.
+    """
     borrowings = Borrowing.objects.filter(actual_return_date=None)
     will_be_expired_soon = []
     already_expired = []
@@ -56,11 +67,13 @@ def get_borrowing_report():
 
         days_until_due = (borrowing.expected_return_date - now).days
 
-        string = (f"Book: {book_title}"
-                  f"\n    Borrowed on: {borrowing_date}"
-                  f"\n    Due: {expected_return_date}"
-                  f"\n    Borrowing ID: {borrowing_id}"
-                  f"\n    From: {email}")
+        string = (
+            f"Book: {book_title}"
+            f"\n    Borrowed on: {borrowing_date}"
+            f"\n    Due: {expected_return_date}"
+            f"\n    Borrowing ID: {borrowing_id}"
+            f"\n    From: {email}"
+        )
         if days_until_due == 1:
             will_be_expired_soon.append(string)
         elif days_until_due <= 0:
