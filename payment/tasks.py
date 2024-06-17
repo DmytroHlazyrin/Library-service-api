@@ -6,6 +6,9 @@ from .models import Payment
 
 # @shared_task
 def check_stripe_sessions():
+    """
+    Update the status of expired Stripe payment sessions.
+    """
     now = timezone.now()
     expired_payments = Payment.objects.filter(
         status=Payment.PaymentStatus.PENDING, session_expiry__lt=now
