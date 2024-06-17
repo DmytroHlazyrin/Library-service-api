@@ -57,7 +57,7 @@ class PaymentSuccessView(APIView):
             send_message(f"💳Payment was successful from {self.request.user}\nMoney: {payment.money_to_pay}$")
             payment.save()
             send_message(
-                f"💸Payment was successful from {self.request.user}\n"
+                f"💸 Payment was successful from {self.request.user}\n"
                 f"Money: {payment.money_to_pay}$"
             )
 
