@@ -38,11 +38,17 @@ def calculate_fine(borrowing: Borrowing) -> Decimal:
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
+    """
+    API view to list and create borrowings.
+    """
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
     def get_queryset(self):
+        """
+        Filter the borrowings based on user role and query parameters.
+        """
         user = self.request.user
 
         if user.is_staff:
@@ -65,11 +71,17 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         return queryset
 
     def get_serializer_class(self):
+        """
+        Return different serializers for GET and POST requests.
+        """
         if self.request.method == "POST":
             return BorrowingCreateSerializer
         return self.serializer_class
 
     def create(self, request: Request, *args, **kwargs) -> Response:
+        """
+        Handle the creation of a new borrowing record.
+        """
         if Payment.objects.filter(
             Q(status=Payment.PaymentStatus.PENDING)
             | Q(status=Payment.PaymentStatus.EXPIRED),
@@ -118,6 +130,9 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
+    """
+    API view to retrieve details of a specific borrowing.
+    """
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingDetailSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
