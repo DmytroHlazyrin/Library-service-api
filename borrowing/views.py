@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -19,30 +17,22 @@ from borrowing.serializers import (
     BorrowingDetailSerializer,
 )
 from payment.models import Payment
+from payment.payment_calculator import calculate_total_price, calculate_fine
 from payment.services import create_stripe_session_for_borrowing
 
 
-def calculate_total_price(borrowing: Borrowing) -> Decimal:
-    delta = borrowing.expected_return_date - borrowing.borrow_date
-    days_borrowed = delta.days
-    total_price = days_borrowed * borrowing.book.daily_fee
-    return Decimal(total_price)
-
-
-def calculate_fine(borrowing: Borrowing) -> Decimal:
-    FINE_MULTIPLIER = 2
-    days_overdue = (borrowing.actual_return_date - borrowing.expected_return_date).days
-    daily_fee = borrowing.book.daily_fee
-    fine_amount = days_overdue * daily_fee * FINE_MULTIPLIER
-    return Decimal(fine_amount)
-
-
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
+    """
+    API view to list and create borrowings.
+    """
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
 
     def get_queryset(self):
+        """
+        Filter the borrowings based on user role and query parameters.
+        """
         user = self.request.user
 
         if user.is_staff:
@@ -65,11 +55,17 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
         return queryset
 
     def get_serializer_class(self):
+        """
+        Return different serializers for GET and POST requests.
+        """
         if self.request.method == "POST":
             return BorrowingCreateSerializer
         return self.serializer_class
 
     def create(self, request: Request, *args, **kwargs) -> Response:
+        """
+        Handle the creation of a new borrowing record.
+        """
         if Payment.objects.filter(
             Q(status=Payment.PaymentStatus.PENDING)
             | Q(status=Payment.PaymentStatus.EXPIRED),
@@ -118,6 +114,9 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
 
 
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
+    """
+    API view to retrieve details of a specific borrowing.
+    """
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingDetailSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)

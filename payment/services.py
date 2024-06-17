@@ -14,6 +14,9 @@ from payment.models import Payment
 def create_stripe_session_for_borrowing(
     borrowing: Borrowing, request: Request, total_price: Decimal, payment_type: str
 ) -> Optional[Session]:
+    """
+    Create a Stripe session and Payment for borrowing a book.
+    """
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
     try:
