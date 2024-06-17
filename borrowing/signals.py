@@ -11,5 +11,5 @@ from botSend import send_message
 )
 def send_telegram_message_on_borrowing_creation(sender, instance, created, **kwargs):
     if created:
-        message = f"✅ Created new borrowing from {instance.user}: {instance.book} ({instance.borrow_date})"
+        message = f"✅ Created new borrowing by {instance.user}: {instance.book} ({instance.borrow_date})"
         send_message(message)
