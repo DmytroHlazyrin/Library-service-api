@@ -38,6 +38,9 @@ class PaymentSuccessView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
+        """
+        Verify payment status and update the payment record.
+        """
 
         session_id = request.query_params.get("session_id")
         if not session_id:
@@ -73,6 +76,9 @@ class PaymentCancelView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
+        """
+        Inform the user that the payment was canceled and can be retried later.
+        """
         print("PaymentCancelView GET request called")
         return Response(
             {
