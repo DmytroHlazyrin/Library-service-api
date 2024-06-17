@@ -10,6 +10,9 @@ from botSend import send_message
     dispatch_uid="send_telegram_message_on_borrowing_creation",
 )
 def send_telegram_message_on_borrowing_creation(sender, instance, created, **kwargs):
+    """
+    Sends a Telegram message when a new Borrowing instance is created.
+    """
     if created:
         message = f"✅ Created new borrowing by {instance.user}: {instance.book} ({instance.borrow_date})"
         send_message(message)

@@ -29,11 +29,18 @@ logger = logging.getLogger(__name__)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handles the /start command, sending a welcome message along with the user's chat ID.
+    """
     chat_id = update.message.chat_id
     await update.message.reply_text(f"🙏Welcome! Your chat_id: {chat_id}")
 
 
 def main() -> None:
+    """
+    Sets up the Telegram bot application and starts polling for updates. Also, initializes
+    the async scheduler.
+    """
     app = ApplicationBuilder().token(TG_BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     scheduler = AsyncIOScheduler()
@@ -42,6 +49,10 @@ def main() -> None:
 
 
 def get_borrowing_report():
+    """
+    Generates a report of borrowings that will expire soon and those that have already expired.
+    Sends a formatted message with the report details via Telegram.
+    """
     borrowings = Borrowing.objects.filter(actual_return_date=None)
     will_be_expired_soon = []
     already_expired = []
