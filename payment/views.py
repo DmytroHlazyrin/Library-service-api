@@ -55,7 +55,7 @@ class PaymentSuccessView(APIView):
         if payment_intent.status == "succeeded":
             payment.status = Payment.PaymentStatus.PAID
             send_message(
-                f"💸 Payment was successful from {self.request.user}\n"
+                f"💸 Payment was successful by {self.request.user}\n"
                 f"Money: {payment.money_to_pay}$"
             )
             payment.save()
