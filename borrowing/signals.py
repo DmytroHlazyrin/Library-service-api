@@ -4,8 +4,15 @@ from .models import Borrowing
 from botSend import send_message
 
 
-@receiver(post_save, sender=Borrowing, dispatch_uid="send_telegram_message_on_borrowing_creation")
+@receiver(
+    post_save,
+    sender=Borrowing,
+    dispatch_uid="send_telegram_message_on_borrowing_creation",
+)
 def send_telegram_message_on_borrowing_creation(sender, instance, created, **kwargs):
+    """
+    Sends a Telegram message when a new Borrowing instance is created.
+    """
     if created:
-        message = f"✅Created new borrowing from {instance.user}: {instance.book} ({instance.borrow_date})"
+        message = f"✅ Created new borrowing by {instance.user}: {instance.book} ({instance.borrow_date})"
         send_message(message)

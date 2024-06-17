@@ -1,46 +1,59 @@
+## Instructions on how to set up a Telegram bot
 
-# Инструкция по настройке Telegram бота
+## 1. Access BotFather
+Open Telegram and search for `@BotFather`. This is the official bot to manage your bots.
 
-## 1. Зайти к BotFather
-Откройте Telegram и найдите `@BotFather`. Это официальный бот для управления вашими ботами.
+## 2. Create a bot
+Use the `/newbot` command to create a new bot. Follow BotFather's instructions to name and tokenize your bot.
 
-## 2. Создать бота
-Используйте команду `/newbot`, чтобы создать нового бота. Следуйте инструкциям BotFather для задания имени и получения токена вашего бота.
-
-## 3. Добавить TG_TOKEN в .env
-Создайте файл `.env` в директории с вашим кодом и добавьте туда токен вашего бота:
-
-```
-TG_TOKEN=ваш_токен_бота
-```
-
-## 4. Запустить bot.py и нажать на Старт, или ввести /start
-Запустите скрипт `bot.py` и в Telegram отправьте команду `/start` вашему боту. В ответ вы получите сообщение с вашим `chat_id`:
+## 3. Add TG_TOKEN to .env
+Create a `.env` file in your code directory and add your bot's token there:
 
 ```
-Добро пожаловать! Ваш chat_id: 000000000
+TG_TOKEN=your_bot_token
 ```
 
-## 5. Добавить chat_id в .env
-Добавьте полученный `chat_id` в файл `.env`:
+## 4. Install dependencies from `requirements.txt`.
+Make sure you have all the required dependencies installed. Add the following dependencies to your `requirements.txt`:
 
 ```
-YOUR_CHAT_ID=ваш_chat_id
+pip install -r requirements.txt
 ```
 
-## 6. Пример использования
-Создайте файл `send_message.py` и добавьте следующий код для отправки сообщения вашему боту:
+```
+python-telegram-bot==20.0
+python-decouple==3.6
+requests==2.28.1
+```
+
+## 5. Run bot.py and click on Start, or type /start
+Run the `bot.py` script and in Telegram send the command `/start` to your bot. You will receive a message with your `chat_id` in response:
+
+```
+Welcome! Your chat_id: 000000000
+```
+
+## 6. Add chat_id to .env
+Add the received `chat_id` to the `.env` file:
+
+```
+YOUR_CHAT_ID=your_chat_id
+```
+
+## 7. Example Usage
+Create a file `send_message.py` and add the following code to send a message to your bot:
 
 ```
 [otherfile.py]
+
 import bot
 
 report_lines = [
-    "Отчет за сегодня:",
-    "1. Задача 1 - просрочена",
-    "2. Задача 2 - выполнена",
-    "3. Задача 3 - в процессе",
-    "4. Задача 4 - просрочена",
+    "Today's report:",
+    "1. Task 1 - overdue",
+    "2. Task 2 - completed",
+    "3. Task 3 in progress."
+    "4. Task 4 is overdue."
 ]
 
 
@@ -50,35 +63,15 @@ if __name__ == '__main__':
 
 ```
 
-Запустите `otherfile.py`, чтобы отправить сообщение указанному `chat_id`.
+Run `otherfile.py` to send a message to the specified `chat_id`.
 
-## Пример структуры проекта
+## Example project structure
 
 ```
 .
-├── .env
-├── bot.py
-├── otherfile.py
-└── requirements.txt
+├─── .env
+├─── bot.py
+├─── botSend.py
+├─── otherfile.py
+└─── requirements.txt
 ```
-
-## Установка зависимостей
-Убедитесь, что у вас установлены все необходимые зависимости. Вы можете установить их, используя файл `requirements.txt`:
-
-```
-pip install -r requirements.txt
-```
-
-## Содержимое `requirements.txt`
-Добавьте следующие зависимости в ваш `requirements.txt`:
-
-```
-python-telegram-bot==20.0
-python-decouple==3.6
-requests==2.28.1
-```
-
-Теперь ваш бот настроен и готов к использованию. Вы можете добавлять дополнительные функции и команды по вашему усмотрению.
-```
-
-Добавьте свои скриншоты на соответствующие шаги в этом файле, чтобы сделать инструкцию более наглядной.
