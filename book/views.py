@@ -38,7 +38,13 @@ class BookListView(
         if author:
             queryset = queryset.filter(author__icontains=author)
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(
+            page if page is not None else queryset, many=True
+        )
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs) -> Response:
