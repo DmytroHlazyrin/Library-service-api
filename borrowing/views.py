@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -19,22 +17,8 @@ from borrowing.serializers import (
     BorrowingDetailSerializer,
 )
 from payment.models import Payment
+from payment.payment_calculator import calculate_total_price, calculate_fine
 from payment.services import create_stripe_session_for_borrowing
-
-
-def calculate_total_price(borrowing: Borrowing) -> Decimal:
-    delta = borrowing.expected_return_date - borrowing.borrow_date
-    days_borrowed = delta.days
-    total_price = days_borrowed * borrowing.book.daily_fee
-    return Decimal(total_price)
-
-
-def calculate_fine(borrowing: Borrowing) -> Decimal:
-    FINE_MULTIPLIER = 2
-    days_overdue = (borrowing.actual_return_date - borrowing.expected_return_date).days
-    daily_fee = borrowing.book.daily_fee
-    fine_amount = days_overdue * daily_fee * FINE_MULTIPLIER
-    return Decimal(fine_amount)
 
 
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
