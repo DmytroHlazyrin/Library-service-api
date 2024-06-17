@@ -54,8 +54,12 @@ class PaymentSuccessView(APIView):
         payment = get_object_or_404(Payment, session_id=session_id)
         if payment_intent.status == "succeeded":
             payment.status = Payment.PaymentStatus.PAID
-            send_message(f"💸Payment was successful from {self.request.user}\nMoney: {payment.money_to_pay}$")
+            send_message(f"💳Payment was successful from {self.request.user}\nMoney: {payment.money_to_pay}$")
             payment.save()
+            send_message(
+                f"💸Payment was successful from {self.request.user} "
+                f"Money: {payment.money_to_pay}$"
+            )
 
         return Response(
             {
@@ -70,9 +74,10 @@ class PaymentCancelView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
+        print("PaymentCancelView GET request called")
         return Response(
             {
-                "detail": "Payment can be made later. "
+                "detail": "Something went wrong! Payment can be made later. "
                 "The session is available for only 24 hours."
             },
             status=status.HTTP_200_OK,

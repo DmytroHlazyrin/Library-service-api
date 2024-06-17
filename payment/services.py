@@ -36,7 +36,7 @@ def create_stripe_session_for_borrowing(
             ],
             mode="payment",
             success_url=f"{success_url}?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=cancel_url,
+            cancel_url=f"{cancel_url}?borrowing_id={borrowing.id}",
         )
 
         Payment.objects.create(
@@ -47,7 +47,7 @@ def create_stripe_session_for_borrowing(
             session_id=session.id,
             money_to_pay=total_price,
         )
-        print(session.url)
+
         return session
 
     except Exception as e:
