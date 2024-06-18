@@ -36,11 +36,14 @@ def daily_payment_report():
         count=Count('id')
     )
 
-    total_amount = aggregate_data.get('total', '0.00')
+    total_amount = Decimal(aggregate_data.get(
+        'total', '0.00'
+    )).quantize(Decimal('0.01'))
+
     total_count = aggregate_data.get('count', 0)
     message = (
         f"Payments per day: {Decimal(total_count, )}\n"
-        f"Amount: {total_amount}"
+        f"Amount: {total_amount} $"
     )
     send_message(message)
 
