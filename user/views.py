@@ -5,9 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from user.schemas import (
     create_user_view_schema,
     manage_user_view_schema,
-    token_obtain_pair_schema,
-    token_refresh_schema,
-    token_verify_schema,
 )
 
 from user.serializers import UserSerializer

@@ -31,24 +31,3 @@ manage_user_view_schema = extend_schema_view(
         responses={200: UserSerializer},
     )
 )
-
-token_obtain_pair_schema = extend_schema_view(
-    post=extend_schema(
-        description="Obtain a JWT token for authentication.",
-        responses={200: OpenApiParameter.OBJECT},
-    )
-)
-
-token_refresh_schema = extend_schema_view(
-    post=extend_schema(
-        description="Refresh a JWT token.",
-        responses={200: OpenApiParameter.OBJECT},
-    )
-)
-
-token_verify_schema = extend_schema_view(
-    post=extend_schema(
-        description="Verify the validity of a JWT token.",
-        responses={200: OpenApiParameter.OBJECT},
-    )
-)
