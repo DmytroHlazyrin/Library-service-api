@@ -1,7 +1,7 @@
 from rest_framework import generics, mixins
 from rest_framework.response import Response
 
-from book.decorators import book_list_view_schema, book_detail_view_schema
+from book.schemas import book_list_view_schema, book_detail_view_schema
 from book.models import Book
 from book.permissions import IsAdminOrReadOnly
 
