@@ -19,8 +19,16 @@ from borrowing.serializers import (
 from payment.models import Payment
 from payment.payment_calculator import calculate_total_price, calculate_fine
 from payment.services import create_stripe_session_for_borrowing
+from rest_framework.decorators import api_view
+
+from borrowing.schemas import (
+    borrowing_list_create_view_schema,
+    borrowing_detail_view_schema,
+    return_borrowing_schema,
+)
 
 
+@borrowing_list_create_view_schema
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
     """
     API view to list and create borrowings.
@@ -113,6 +121,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@borrowing_detail_view_schema
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
     """
     API view to retrieve details of a specific borrowing.
@@ -123,6 +132,7 @@ class BorrowingDetailAPIView(generics.RetrieveAPIView):
 
 
 @api_view(["POST", "GET"])
+@return_borrowing_schema
 def return_borrowing(request: Request, pk: int) -> Response:
     """
     Handle the return of a borrowed book.

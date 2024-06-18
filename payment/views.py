@@ -11,7 +11,15 @@ from payment.models import Payment
 from payment.permissions import IsAdminOrOwner
 from payment.serializers import PaymentSerializer, PaymentListSerializer
 
+from payment.schemas import (
+    payment_list_create_view_schema,
+    payment_detail_view_schema,
+    payment_success_view_schema,
+    payment_cancel_view_schema,
+)
 
+
+@payment_list_create_view_schema
 class PaymentListView(generics.ListAPIView):
     serializer_class = PaymentListSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
@@ -23,6 +31,7 @@ class PaymentListView(generics.ListAPIView):
         return Payment.objects.filter(borrowing_id__user=user)
 
 
+@payment_detail_view_schema
 class PaymentDetailView(generics.RetrieveAPIView):
     serializer_class = PaymentSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
@@ -34,6 +43,7 @@ class PaymentDetailView(generics.RetrieveAPIView):
         return Payment.objects.filter(borrowing_id__user=user)
 
 
+@payment_success_view_schema
 class PaymentSuccessView(APIView):
     permission_classes = (AllowAny,)
 
@@ -78,6 +88,7 @@ class PaymentSuccessView(APIView):
         )
 
 
+@payment_cancel_view_schema
 class PaymentCancelView(APIView):
     permission_classes = (AllowAny,)
 
