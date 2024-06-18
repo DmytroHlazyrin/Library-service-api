@@ -1,0 +1,422 @@
+[
+    {
+        "model": "user.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$320000$6uM28XWOFX6ewyloJzjqmt$L+ZhofPylneoaL2iZS4sZu4ZMUNb4oIevfAdzOMn/eE=",
+            "last_login": "2023-08-08T14:14:03Z",
+            "is_superuser": true,
+            "first_name": "Admin",
+            "last_name": "User",
+            "email": "admin@admin.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-08-08T13:58:29Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$320000$6uM28XWOFX6ewyloJzjqmt$L+ZhofPylneoaL2iZS4sZu4ZMUNb4oIevfAdzOMn/eE=",
+            "last_login": "2023-08-08T14:14:03Z",
+            "is_superuser": false,
+            "first_name": "Bob",
+            "last_name": "User",
+            "email": "user_bob@user.com",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-08-08T13:58:29Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },    {
+        "model": "user.user",
+        "pk": 3,
+        "fields": {
+            "password": "pbkdf2_sha256$320000$6uM28XWOFX6ewyloJzjqmt$L+ZhofPylneoaL2iZS4sZu4ZMUNb4oIevfAdzOMn/eE=",
+            "last_login": "2023-08-08T14:14:03Z",
+            "is_superuser": false,
+            "first_name": "Den",
+            "last_name": "User",
+            "email": "user_den@user.com",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-08-08T13:58:29Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 1,
+        "fields": {
+            "title": "To Kill a Mockingbird",
+            "author": "Harper Lee",
+            "cover": "HARD",
+            "inventory": 10,
+            "daily_fee": 2.99
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 2,
+        "fields": {
+            "title": "1984",
+            "author": "George Orwell",
+            "cover": "SOFT",
+            "inventory": 15,
+            "daily_fee": 3.50
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 3,
+        "fields": {
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "cover": "HARD",
+            "inventory": 8,
+            "daily_fee": 4.25
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 4,
+        "fields": {
+            "title": "Harry Potter and the Sorcerer's Stone",
+            "author": "J.K. Rowling",
+            "cover": "HARD",
+            "inventory": 20,
+            "daily_fee": 5.99
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 5,
+        "fields": {
+            "title": "Pride and Prejudice",
+            "author": "Jane Austen",
+            "cover": "SOFT",
+            "inventory": 12,
+            "daily_fee": 3.25
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 6,
+        "fields": {
+            "title": "The Catcher in the Rye",
+            "author": "J.D. Salinger",
+            "cover": "HARD",
+            "inventory": 5,
+            "daily_fee": 4.50
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 7,
+        "fields": {
+            "title": "To the Lighthouse",
+            "author": "Virginia Woolf",
+            "cover": "SOFT",
+            "inventory": 7,
+            "daily_fee": 3.75
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 8,
+        "fields": {
+            "title": "Moby-Dick",
+            "author": "Herman Melville",
+            "cover": "HARD",
+            "inventory": 18,
+            "daily_fee": 6.25
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 9,
+        "fields": {
+            "title": "The Lord of the Rings",
+            "author": "J.R.R. Tolkien",
+            "cover": "HARD",
+            "inventory": 25,
+            "daily_fee": 7.99
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 10,
+        "fields": {
+            "title": "Jane Eyre",
+            "author": "Charlotte Brontë",
+            "cover": "SOFT",
+            "inventory": 9,
+            "daily_fee": 4.75
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 11,
+        "fields": {
+            "title": "The Hobbit",
+            "author": "J.R.R. Tolkien",
+            "cover": "HARD",
+            "inventory": 17,
+            "daily_fee": 6.75
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 12,
+        "fields": {
+            "title": "The Catcher in the Rye",
+            "author": "J.D. Salinger",
+            "cover": "SOFT",
+            "inventory": 13,
+            "daily_fee": 4.50
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 13,
+        "fields": {
+            "title": "Wuthering Heights",
+            "author": "Emily Brontë",
+            "cover": "HARD",
+            "inventory": 11,
+            "daily_fee": 5.25
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 14,
+        "fields": {
+            "title": "The Picture of Dorian Gray",
+            "author": "Oscar Wilde",
+            "cover": "HARD",
+            "inventory": 16,
+            "daily_fee": 6.99
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 15,
+        "fields": {
+            "title": "Brave New World",
+            "author": "Aldous Huxley",
+            "cover": "SOFT",
+            "inventory": 14,
+            "daily_fee": 5.50
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 16,
+        "fields": {
+            "title": "The Odyssey",
+            "author": "Homer",
+            "cover": "HARD",
+            "inventory": 22,
+            "daily_fee": 7.25
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 17,
+        "fields": {
+            "title": "Frankenstein",
+            "author": "Mary Shelley",
+            "cover": "SOFT",
+            "inventory": 10,
+            "daily_fee": 4.99
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 18,
+        "fields": {
+            "title": "The Adventures of Sherlock Holmes",
+            "author": "Arthur Conan Doyle",
+            "cover": "HARD",
+            "inventory": 19,
+            "daily_fee": 6.50
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 19,
+        "fields": {
+            "title": "One Hundred Years of Solitude",
+            "author": "Gabriel García Márquez",
+            "cover": "SOFT",
+            "inventory": 10,
+            "daily_fee": 5.99
+        }
+    },
+    {
+        "model": "book.book",
+        "pk": 20,
+        "fields": {
+            "title": "Harry Potter and the the Cursed Child",
+            "author": "J.K. Rowling",
+            "cover": "HARD",
+            "inventory": 20,
+            "daily_fee": 6.99
+        }
+    },
+        {
+        "model": "borrowing.borrowing",
+        "pk": 1,
+        "fields": {
+            "borrow_date": "2024-06-01",
+            "expected_return_date": "2024-06-15",
+            "actual_return_date": null,
+            "book": 1,
+            "user": 1
+        }
+    },
+    {
+        "model": "borrowing.borrowing",
+        "pk": 2,
+        "fields": {
+            "borrow_date": "2024-06-05",
+            "expected_return_date": "2024-06-15",
+            "actual_return_date": null,
+            "book": 2,
+            "user": 1
+        }
+    },
+    {
+        "model": "borrowing.borrowing",
+        "pk": 3,
+        "fields": {
+            "borrow_date": "2024-06-10",
+            "expected_return_date": "2024-06-25",
+            "actual_return_date": null,
+            "book": 3,
+            "user": 2
+        }
+    },
+    {
+        "model": "borrowing.borrowing",
+        "pk": 4,
+        "fields": {
+            "borrow_date": "2024-06-15",
+            "expected_return_date": "2024-06-30",
+            "actual_return_date": null,
+            "book": 4,
+            "user": 2
+        }
+    },
+    {
+        "model": "borrowing.borrowing",
+        "pk": 5,
+        "fields": {
+            "borrow_date": "2024-06-20",
+            "expected_return_date": "2024-07-05",
+            "actual_return_date": null,
+            "book": 5,
+            "user": 3
+        }
+    },
+    {
+        "model": "borrowing.borrowing",
+        "pk": 6,
+        "fields": {
+            "borrow_date": "2024-06-25",
+            "expected_return_date": "2024-07-10",
+            "actual_return_date": null,
+            "book": 6,
+            "user": 3
+        }
+    },
+    {
+        "model": "payment.payment",
+        "pk": 1,
+        "fields": {
+            "status": "PENDING",
+            "payment_type": "PAYMENT",
+            "borrowing_id": 1,
+            "session_url": "https://example.com/session1",
+            "session_id": "session1",
+            "money_to_pay": 5.00,
+            "created_at": "2024-06-01T00:00:00",
+            "session_expiry": "2024-06-02T00:00:00"
+        }
+    },
+    {
+        "model": "payment.payment",
+        "pk": 2,
+        "fields": {
+            "status": "PAID",
+            "payment_type": "PAYMENT",
+            "borrowing_id": 2,
+            "session_url": "https://example.com/session2",
+            "session_id": "session2",
+            "money_to_pay": 5.00,
+            "created_at": "2024-06-05T00:00:00",
+            "session_expiry": "2024-06-06T00:00:00"
+        }
+    },
+    {
+        "model": "payment.payment",
+        "pk": 3,
+        "fields": {
+            "status": "EXPIRED",
+            "payment_type": "FINE",
+            "borrowing_id": 3,
+            "session_url": "https://example.com/session3",
+            "session_id": "session3",
+            "money_to_pay": 10.00,
+            "created_at": "2024-06-10T00:00:00",
+            "session_expiry": "2024-06-11T00:00:00"
+        }
+    },
+    {
+        "model": "payment.payment",
+        "pk": 4,
+        "fields": {
+            "status": "PAID",
+            "payment_type": "PAYMENT",
+            "borrowing_id": 4,
+            "session_url": "https://example.com/session4",
+            "session_id": "session4",
+            "money_to_pay": 5.00,
+            "created_at": "2024-05-16T00:00:00",
+            "session_expiry": "2024-06-17T00:00:00"
+        }
+    },
+    {
+        "model": "payment.payment",
+        "pk": 5,
+        "fields": {
+            "status": "PAID",
+            "payment_type": "PAYMENT",
+            "borrowing_id": 5,
+            "session_url": "https://example.com/session5",
+            "session_id": "session5",
+            "money_to_pay": 5.00,
+            "created_at": "2024-05-17T00:00:00",
+            "session_expiry": "2024-06-16T00:00:00"
+        }
+    },
+    {
+        "model": "payment.payment",
+        "pk": 6,
+        "fields": {
+            "status": "PAID",
+            "payment_type": "PAYMENT",
+            "borrowing_id": 6,
+            "session_url": "https://example.com/session6",
+            "session_id": "session6",
+            "money_to_pay": 5.00,
+            "created_at": "2024-05-17T00:00:00",
+            "session_expiry": "2024-05-15T00:00:00"
+        }
+    }
+]
