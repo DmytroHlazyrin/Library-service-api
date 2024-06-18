@@ -45,14 +45,14 @@ borrowing_list_create_view_schema = extend_schema_view(
                 description="ID of the book to be borrowed",
                 required=True,
                 type=int,
-                location='query'
+                location="query"
             ),
             OpenApiParameter(
                 name="expected_return_date",
                 description="Expected return date of the book",
                 required=True,
                 type=str,
-                location='query'
+                location="query"
             ),
         ],
         responses={

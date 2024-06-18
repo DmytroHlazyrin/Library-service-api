@@ -1,18 +1,5 @@
-import pathlib
-import uuid
-
 from django.db import models
-from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
-
-
-def book_image_path(instance: "Book", filename: str) -> pathlib.Path:
-    """
-    Generates a unique file path for a book image upload.
-    """
-    filename = (f"{slugify(instance.title)}-{uuid.uuid4()}.jpg"
-                + pathlib.Path(filename).suffix)
-    return pathlib.Path("uploads/books") / pathlib.Path(filename)
 
 
 class Book(models.Model):
@@ -29,7 +16,6 @@ class Book(models.Model):
     cover = models.CharField(max_length=255, choices=Covers.choices)
     inventory = models.PositiveIntegerField()
     daily_fee = models.DecimalField(max_digits=5, decimal_places=2)
-    image = models.ImageField(upload_to=book_image_path, null=True)
 
     def __str__(self) -> str:
         """Returns the title of the book."""

@@ -1,0 +1,63 @@
+services:
+  redis:
+    image: redis:7.2.4-alpine
+
+  django:
+    container_name: django
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python manage.py wait_for_db && 
+      python manage.py migrate && 
+      python manage.py loaddata library_service_db_data.json &&
+      python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - redis
+      - db
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:$PGDATA
+
+  celery:
+    container_name: celery
+    build: .
+    command: celery -A library_service worker -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - django
+      - db
+
+  celery-beat:
+    container_name: celery-beat
+    build: .
+    command: celery -A library_service beat -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - django
+      - db
+
+  flower:
+    container_name: flower
+    build: .
+    command: celery -A library_service flower
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/app
+    depends_on:
+      - celery
+
+volumes:
+  db:
