@@ -7,8 +7,7 @@ from celery.schedules import crontab
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = ("django-insecure-e^t9$y43jp#e43%z"
-              "fh1z&=oo8z)z3$=sizkl29w!h_f+s&8qlo")
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 DEBUG = True
 
@@ -31,7 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
     "drf_spectacular",
     "django_celery_beat",
 
@@ -166,8 +165,8 @@ AUTH_USER_MODEL = "user.User"
 STRIPE_PUBLISHABLE_KEY = config("STRIPE_PUBLISHABLE_KEY")
 STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
 CELERY_BEAT_SCHEDULE = {
     "expired_payment_sessions_task": {

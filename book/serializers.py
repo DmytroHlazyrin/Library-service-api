@@ -17,7 +17,6 @@ class BookSerializer(serializers.ModelSerializer):
             "cover",
             "inventory",
             "daily_fee",
-            "image"
         )
 
     def validate_daily_fee(self, value: float) -> float:
