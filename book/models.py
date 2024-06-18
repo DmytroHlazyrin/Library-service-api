@@ -57,3 +57,6 @@ class Book(models.Model):
             )
 
         super().delete(using=using, keep_parents=keep_parents)
+
+    class Meta:
+        ordering = ["-id"]

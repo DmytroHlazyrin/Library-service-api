@@ -28,10 +28,41 @@ book_list_view_schema = extend_schema_view(
     post=extend_schema(
         request=BookSerializer,
         responses={201: BookSerializer},
+        parameters=[
+            OpenApiParameter(
+                "title",
+                OpenApiTypes.STR,
+                description="Title of the book.",
+                required=True,
+            ),
+            OpenApiParameter(
+                "author",
+                OpenApiTypes.STR,
+                description="Author of the book.",
+                required=True,
+            ),
+            OpenApiParameter(
+                "cover",
+                OpenApiTypes.STR,
+                description="Cover type of the book.",
+                required=True,
+            ),
+            OpenApiParameter(
+                "inventory",
+                OpenApiTypes.INT,
+                description="Inventory count of the book.",
+                required=True,
+            ),
+            OpenApiParameter(
+                "daily_fee",
+                OpenApiTypes.NUMBER,
+                description="Daily fee for renting the book.",
+                required=True,
+            ),
+        ],
         description="Create a new book."
     ),
 )
-
 book_detail_view_schema = extend_schema_view(
     get=extend_schema(
         description="Retrieve a specific book by ID.",
