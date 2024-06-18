@@ -12,10 +12,7 @@ class Payment(models.Model):
 
     class PaymentStatus(models.TextChoices):
         PENDING = "PENDING", "Pending"
-        PAID = (
-            "PAID",
-            "Paid",
-        )
+        PAID = "PAID", "Paid",
         EXPIRED = "EXPIRED", "Expired"
 
     class PaymentType(models.TextChoices):
@@ -36,9 +33,13 @@ class Payment(models.Model):
     money_to_pay = models.DecimalField(
         max_digits=10, decimal_places=2, default=Decimal("0.00")
     )
-    session_expiry = models.DateTimeField(
-        default=timezone.now() + timedelta(hours=24)
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    session_expiry = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.session_expiry = timezone.now() + timedelta(hours=24)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.payment_type} - {self.status} - {self.money_to_pay}"

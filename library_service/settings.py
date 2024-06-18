@@ -1,6 +1,9 @@
 import sys
 from datetime import timedelta
 from pathlib import Path
+
+import dj_database_url
+from celery.schedules import crontab
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +33,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework_simplejwt',
     "drf_spectacular",
+    "django_celery_beat",
 
     # apps
     "user",
@@ -118,16 +122,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "library_service.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("POSTGRES_DB"),
-        "USER": config("POSTGRES_USER"),
-        "PASSWORD": config("POSTGRES_PASSWORD"),
-        "HOST": config("POSTGRES_HOST"),
-        "PORT": config("POSTGRES_PORT"),
-    }
-}
+DATABASE_URL = config("DATABASE_URL", default="sqlite:///db.sqlite3")
+
+DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -171,3 +168,22 @@ STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+CELERY_BEAT_SCHEDULE = {
+    "expired_payment_sessions_task": {
+        "task": "payment.tasks.check_stripe_sessions",
+        "schedule": crontab(minute="*/1")
+    },
+    "borrowing_expired_task": {
+        "task": "borrowing.tasks.get_borrowing_report",
+        "schedule": crontab(hour=15, minute=0)
+    },
+    "daily_payment_report_task": {
+        "task": "payment.tasks.daily_payment_report",
+        "schedule": crontab(hour=19, minute=0)
+    },
+    "monthly_payment_report_task": {
+        "task": "payment.tasks.monthly_payment_report",
+        "schedule": crontab(hour=9, minute=0, day_of_month=1)
+    }
+}

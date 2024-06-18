@@ -1,0 +1,11 @@
+venv
+Dockerfile
+README.md
+.idea
+docker-compose.yml
+.pytest_cache/
+**__pycache__/
+**db.sqlite3
+.gitignore
+.github
+.env.sample
