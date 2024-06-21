@@ -3,7 +3,6 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework import generics, status
-from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -118,44 +117,56 @@ class BorrowingDetailAPIView(generics.RetrieveAPIView):
     permission_classes = (IsAdminOrOwner,)
 
 
-@api_view(["POST", "GET"])
-def return_borrowing(request: Request, pk: int) -> Response:
+class ReturnBorrowingAPIView(generics.GenericAPIView):
     """
     Handle the return of a borrowed book.
     """
-    try:
-        borrowing = Borrowing.objects.get(pk=pk)
-    except Borrowing.DoesNotExist:
-        return Response(
-            {"error": "Borrowing not found"}, status=status.HTTP_404_NOT_FOUND
-        )
+    serializer_class = BorrowingSerializer
+    queryset = Borrowing.objects.all()
 
-    if borrowing.actual_return_date is not None:
-        return Response(
-            {"error": "Borrowing already returned"}, status=status.HTTP_400_BAD_REQUEST
-        )
+    def get_object(self):
+        try:
+            pk = self.kwargs.get('pk')
+            return self.get_queryset().get(pk=pk)
+        except Borrowing.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
 
-    try:
-        with transaction.atomic():
-            borrowing.actual_return_date = timezone.now().date()
-            borrowing.save()
+    def post(self, request, pk):
+        borrowing = self.get_object()
 
-            book = borrowing.book
-            book.inventory += 1
-            book.save()
+        if borrowing.actual_return_date is not None:
+            return Response(
+                {"error": "Borrowing already returned"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-            if borrowing.expected_return_date < borrowing.actual_return_date:
-                fine_amount = calculate_fine(borrowing)
-                payment_type = Payment.PaymentType.FINE
-                session = create_stripe_session_for_borrowing(
-                    borrowing, request, fine_amount, payment_type
-                )
-                if session:
-                    return redirect(session.url, code=303)
-                raise IntegrityError("Error creating payment session for fine")
+        try:
+            with transaction.atomic():
+                borrowing.actual_return_date = timezone.now().date()
+                borrowing.save()
+
+                book = borrowing.book
+                book.inventory += 1
+                book.save()
+
+                if borrowing.expected_return_date < borrowing.actual_return_date:
+                    fine_amount = calculate_fine(borrowing)
+                    payment_type = Payment.PaymentType.FINE
+                    session = create_stripe_session_for_borrowing(
+                        borrowing, request, fine_amount, payment_type
+                    )
+                    if session:
+                        return redirect(session.url, code=303)
+                    raise IntegrityError(
+                        "Error creating payment session for fine"
+                    )
+        except IntegrityError as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         return Response(
             {"status": "Return date set and inventory updated"},
             status=status.HTTP_200_OK,
         )
-    except IntegrityError as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
