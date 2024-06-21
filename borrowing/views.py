@@ -5,7 +5,6 @@ from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -27,7 +26,7 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
     """
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingSerializer
-    permission_classes = (IsAuthenticated, IsAdminOrOwner)
+    permission_classes = (IsAdminOrOwner,)
 
     def get_queryset(self):
         """
@@ -116,7 +115,7 @@ class BorrowingDetailAPIView(generics.RetrieveAPIView):
     """
     queryset = Borrowing.objects.select_related("user", "book")
     serializer_class = BorrowingDetailSerializer
-    permission_classes = (IsAuthenticated, IsAdminOrOwner)
+    permission_classes = (IsAdminOrOwner,)
 
 
 @api_view(["POST", "GET"])
