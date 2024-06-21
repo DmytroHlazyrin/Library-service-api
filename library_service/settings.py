@@ -2,8 +2,6 @@ import sys
 from datetime import timedelta
 from pathlib import Path
 
-import dj_database_url
-from celery.schedules import crontab
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -99,6 +97,9 @@ if not TESTING:
             "anon": "10/minute",
             "user": "30/minute",
         },
+        "DEFAULT_PERMISSION_CLASSES": [
+            "rest_framework.permissions.IsAuthenticated",
+        ],
     })
 
 ROOT_URLCONF = "library_service.urls"
