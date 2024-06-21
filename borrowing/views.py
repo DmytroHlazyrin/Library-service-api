@@ -9,6 +9,11 @@ from rest_framework.response import Response
 
 from borrowing.models import Borrowing, Book
 from borrowing.permissions import IsAdminOrOwner
+from borrowing.schemas import (
+    borrowing_list_create_view_schema,
+    borrowing_detail_view_schema,
+    return_borrowing_schema,
+)
 from borrowing.serializers import (
     BorrowingSerializer,
     BorrowingCreateSerializer,
@@ -19,6 +24,7 @@ from payment.payment_calculator import calculate_total_price, calculate_fine
 from payment.services import create_stripe_session_for_borrowing
 
 
+@borrowing_list_create_view_schema
 class BorrowingListCreateAPIView(generics.ListCreateAPIView):
     """
     API view to list and create borrowings.
@@ -75,12 +81,14 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
             book = Book.objects.get(id=book_id)
         except Book.DoesNotExist:
             return Response(
-                {"error": "Book not found"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Book not found"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
         if book.inventory < 1:
             return Response(
-                {"error": "Book is not available"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Book is not available"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
         try:
@@ -105,9 +113,13 @@ class BorrowingListCreateAPIView(generics.ListCreateAPIView):
                 return redirect(session.url, code=303)
 
         except IntegrityError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
+@borrowing_detail_view_schema
 class BorrowingDetailAPIView(generics.RetrieveAPIView):
     """
     API view to retrieve details of a specific borrowing.
@@ -117,6 +129,7 @@ class BorrowingDetailAPIView(generics.RetrieveAPIView):
     permission_classes = (IsAdminOrOwner,)
 
 
+@return_borrowing_schema
 class ReturnBorrowingAPIView(generics.GenericAPIView):
     """
     Handle the return of a borrowed book.

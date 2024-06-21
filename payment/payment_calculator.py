@@ -18,7 +18,8 @@ def calculate_fine(borrowing: Borrowing) -> Decimal:
     Calculate the fine for overdue borrowing of a book.
     """
     fine_multiplier = 2
-    days_overdue = (borrowing.actual_return_date - borrowing.expected_return_date).days
+    days_overdue = (borrowing.actual_return_date
+                    - borrowing.expected_return_date).days
     daily_fee = borrowing.book.daily_fee
     fine_amount = days_overdue * daily_fee * fine_multiplier
     return Decimal(fine_amount)

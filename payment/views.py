@@ -11,7 +11,15 @@ from payment.models import Payment
 from payment.permissions import IsAdminOrOwner
 from payment.serializers import PaymentSerializer, PaymentListSerializer
 
+from payment.schemas import (
+    payment_list_create_view_schema,
+    payment_detail_view_schema,
+    payment_success_view_schema,
+    payment_cancel_view_schema,
+)
 
+
+@payment_list_create_view_schema
 class PaymentListView(generics.ListAPIView):
     serializer_class = PaymentListSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
@@ -23,6 +31,7 @@ class PaymentListView(generics.ListAPIView):
         return Payment.objects.filter(borrowing_id__user=user)
 
 
+@payment_detail_view_schema
 class PaymentDetailView(generics.RetrieveAPIView):
     serializer_class = PaymentSerializer
     permission_classes = (IsAuthenticated, IsAdminOrOwner)
@@ -34,6 +43,7 @@ class PaymentDetailView(generics.RetrieveAPIView):
         return Payment.objects.filter(borrowing_id__user=user)
 
 
+@payment_success_view_schema
 class PaymentSuccessView(APIView):
     permission_classes = (AllowAny,)
 
@@ -45,20 +55,28 @@ class PaymentSuccessView(APIView):
         session_id = request.query_params.get("session_id")
         if not session_id:
             return Response(
-                {"error": "No session ID provided"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "No session ID provided"},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
             session = stripe.checkout.Session.retrieve(session_id)
-            payment_intent = stripe.PaymentIntent.retrieve(session.payment_intent)
+            payment_intent = stripe.PaymentIntent.retrieve(
+                session.payment_intent
+            )
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         payment = get_object_or_404(Payment, session_id=session_id)
         if payment_intent.status == "succeeded":
             payment.status = Payment.PaymentStatus.PAID
             send_message(
-                f"💸 Payment was successful by {self.request.user}\n"
+                f"💸 Payment (ID: {payment.id}) was successful\n"
+                f"Borrowing ID: {payment.borrowing_id_id}\n"
+                f"User: {self.request.user}\n"
                 f"Money: {payment.money_to_pay}$"
             )
             payment.save()
@@ -72,6 +90,7 @@ class PaymentSuccessView(APIView):
         )
 
 
+@payment_cancel_view_schema
 class PaymentCancelView(APIView):
     permission_classes = (AllowAny,)
 

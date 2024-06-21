@@ -7,6 +7,7 @@ class BorrowingConfig(AppConfig):
 
     def ready(self):
         """
-        Imports the signals module to register the signal handlers for the Borrowing app.
+        Imports the signals module to register
+        the signal handlers for the Borrowing app.
         """
         import borrowing.signals

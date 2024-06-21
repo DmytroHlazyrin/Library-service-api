@@ -52,4 +52,3 @@ class BorrowingDetailSerializer(BorrowingSerializer):
             "actual_return_date",
             "payments"
         )
-

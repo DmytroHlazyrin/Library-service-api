@@ -20,4 +20,10 @@ class PaymentSerializer(serializers.ModelSerializer):
 class PaymentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ["id", "status", "payment_type", "money_to_pay", "session_url"]
+        fields = [
+            "id",
+            "status",
+            "payment_type",
+            "money_to_pay",
+            "session_url"
+        ]

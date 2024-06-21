@@ -5,6 +5,8 @@ from rest_framework.test import APITestCase, APIClient
 
 
 User = get_user_model()
+
+
 class UserTests(APITestCase):
 
     def setUp(self):
@@ -107,7 +109,11 @@ class UserTests(APITestCase):
             last_name="Last",
         )
         self.client.force_authenticate(user=user)
-        payload = {"password": "newpassword123", "first_name": "NewFirst", "last_name": "NewLast"}
+        payload = {
+            "password": "newpassword123",
+            "first_name": "NewFirst",
+            "last_name": "NewLast",
+        }
 
         response = self.client.patch(reverse("user:manage"), payload)
 
