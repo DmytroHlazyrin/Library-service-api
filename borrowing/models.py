@@ -1,9 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from book.models import Book
-from library_service import settings
 
-User = settings.AUTH_USER_MODEL
+User = get_user_model()
 
 
 class Borrowing(models.Model):
